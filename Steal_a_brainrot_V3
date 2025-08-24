@@ -1,4 +1,4 @@
--- Services
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -6,13 +6,13 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
--- ScreenGui
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = PlayerGui
 ScreenGui.Name = "LoadingScreen"
 
--- Background Frame
+
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0.4,0,0.4,0)
 Frame.Position = UDim2.new(0.5,0,1,0) -- mulai dari bawah
@@ -23,7 +23,7 @@ Frame.Parent = ScreenGui
 Frame.ClipsDescendants = true
 Frame.BorderSizePixel = 0
 
--- Gambar Animasi
+
 local Image = Instance.new("ImageLabel")
 Image.Size = UDim2.new(0.5,0,0.5,0)
 Image.Position = UDim2.new(0.5,0,0.5,0)
@@ -32,7 +32,7 @@ Image.Image = "rbxassetid://109257850672019"
 Image.BackgroundTransparency = 1
 Image.Parent = Frame
 
--- Titik-titik membentuk cincin
+
 local ringCount = 36
 local ringRadius = 80
 local dots = {}
@@ -48,12 +48,12 @@ for i = 1, ringCount do
     table.insert(dots, dot)
 end
 
--- Tween GUI masuk
+
 TweenService:Create(Frame, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
     Position = UDim2.new(0.5,0,0.5,0)
 }):Play()
 
--- Animasi gambar dan cincin
+
 local rotation = 0
 local loadingTime = 5
 RunService.RenderStepped:Connect(function(dt)
@@ -67,7 +67,7 @@ RunService.RenderStepped:Connect(function(dt)
     end
 end)
 
--- Fungsi ESP owner + label OWNER
+
 local function createOwnerESP(targetPlayer)
     if targetPlayer.Character then
         -- Highlight
@@ -97,7 +97,7 @@ local function createOwnerESP(targetPlayer)
     end
 end
 
--- Cek owner join
+
 local function checkOwner(p)
     if p.Name == "G0DST3R_ALIP" then
         createOwnerESP(p)
